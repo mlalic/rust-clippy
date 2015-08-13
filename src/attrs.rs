@@ -6,7 +6,7 @@ use syntax::codemap::ExpnInfo;
 
 use utils::{in_macro, match_path, span_help_and_lint};
 
-declare_lint! { pub INLINE_ALWAYS, Warn,
+declare_lint! { pub INLINE_ALWAYS, Allow,
     "`#[inline(always)]` is a bad idea in most cases" }
 
 

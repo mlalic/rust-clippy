@@ -4,7 +4,7 @@ use syntax::codemap::Span;
 
 use consts::{constant, is_negative};
 use consts::Constant::ConstantInt;
-use utils::{span_lint, snippet};
+use utils::{span_lint, snippet, in_external_macro};
 
 declare_lint! { pub IDENTITY_OP, Warn,
                 "using identity operations, e.g. `x + 0` or `y / 1`" }
@@ -44,6 +44,7 @@ impl LintPass for IdentityOp {
 
 
 fn check(cx: &Context, e: &Expr, m: i8, span: Span, arg: Span) {
+    if in_external_macro(cx, e.span) {return;}
     if let Some((c, needed_resolution)) = constant(cx, e) {
         if needed_resolution { return; } // skip linting w/ lookup for now
         if let ConstantInt(v, ty) = c {

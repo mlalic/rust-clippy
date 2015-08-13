@@ -72,7 +72,7 @@ fn check_nan(cx: &Context, path: &Path, span: Span) {
     });
 }
 
-declare_lint!(pub FLOAT_CMP, Warn,
+declare_lint!(pub FLOAT_CMP, Allow,
               "using `==` or `!=` on float values (as floating-point operations \
                usually involve rounding errors, it is always better to check for approximate \
                equality within small bounds)");
@@ -89,10 +89,6 @@ impl LintPass for FloatCmp {
         if let ExprBinary(ref cmp, ref left, ref right) = expr.node {
             let op = cmp.node;
             if (op == BiEq || op == BiNe) && (is_float(cx, left) || is_float(cx, right)) {
-                if constant(cx, left).or_else(|| constant(cx, right)).map_or(
-                        false, |c| c.0.as_float().map_or(false, |f| f == 0.0)) {
-                    return;
-                }
                 span_lint(cx, FLOAT_CMP, expr.span, &format!(
                     "{}-comparison of f32 or f64 detected. Consider changing this to \
                      `abs({} - {}) < epsilon` for some suitable value of epsilon",
